@@ -1,0 +1,73 @@
+name: Build Gunz Client
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore vcpkg cache
+      uses: actions/cache/restore@v4
+      with:
+        path: C:\vcpkg\installed
+        key: vcpkg-x86-windows-openssl-zlib-v1
+
+    - name: Install dependencies (OpenSSL + zlib)
+      shell: powershell
+      run: |
+        # Install both OpenSSL and zlib via vcpkg
+        vcpkg install openssl:x86-windows zlib:x86-windows
+
+        # Setup OpenSSL in expected location
+        New-Item -ItemType Directory -Force -Path "C:\OpenSSL-Win32\include"
+        New-Item -ItemType Directory -Force -Path "C:\OpenSSL-Win32\lib"
+        Copy-Item "C:\vcpkg\installed\x86-windows\include\openssl" "C:\OpenSSL-Win32\include\" -Recurse -Force
+        Copy-Item "C:\vcpkg\installed\x86-windows\lib\*" "C:\OpenSSL-Win32\lib\" -Force
+
+        # Setup zlib in expected location
+        New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\zlib\include"
+        New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\zlib\lib"
+        Copy-Item "C:\vcpkg\installed\x86-windows\include\zlib.h" "C:\Program Files (x86)\zlib\include\" -Force
+        Copy-Item "C:\vcpkg\installed\x86-windows\include\zconf.h" "C:\Program Files (x86)\zlib\include\" -Force
+        Copy-Item "C:\vcpkg\installed\x86-windows\lib\zlib.lib" "C:\Program Files (x86)\zlib\lib\zlibstatic.lib" -Force
+
+    - name: Configure CMake
+      shell: cmd
+      run: |
+        cd ogz-source
+        if not exist build\win32 mkdir build\win32
+        cd build\win32
+        cmake -G "Visual Studio 17 2022" -A Win32 -Wno-dev -DBUILD_SHARED_LIBS=OFF -DZLIB_LIBRARY="C:\Program Files (x86)\zlib\lib\zlibstatic.lib" -DZLIB_LIBRARIES="C:\Program Files (x86)\zlib\lib\zlibstatic.lib" -DZLIB_INCLUDE_DIR="C:\Program Files (x86)\zlib\include" ..\..\src
+
+    - name: Build Gunz Client
+      shell: cmd
+      run: |
+        cd ogz-source\build\win32
+        cmake --build . --config Release --target INSTALL
+
+    - name: Copy runtime DLLs
+      shell: powershell
+      run: |
+        Copy-Item "C:\vcpkg\installed\x86-windows\bin\zlib1.dll" "ogz-source\install\client\" -Force
+
+    - name: Upload Gunz Client
+      uses: actions/upload-artifact@v4
+      with:
+        name: Gunz-Client-Windows
+        path: ogz-source/install/client/
+        retention-days: 30
+
+    - name: Save vcpkg cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: C:\vcpkg\installed
+        key: vcpkg-x86-windows-openssl-zlib-v1
