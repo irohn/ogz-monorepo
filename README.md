@@ -1,14 +1,15 @@
 # Open GunZ (OGZ)
 
+This is the Open GunZ (GunZ The Duel game) source repo. It was forked from the OGZ and (https://github.com/open-gunz/ogz-source)Refined GunZ source (https://github.com/Asunaya/RefinedGunz) and updated by the International GunZ (http://igunz.net) private server developers.
 Open-source client-server implementation of GunZ: The Duel.
 
 ## Repository Structure
 
-| Directory | Contents |
-|-----------|----------|
+| Directory     | Contents                                           |
+| ------------- | -------------------------------------------------- |
 | `ogz-source/` | C++ source code (client, server, common libraries) |
-| `ogz-server/` | Server binaries and configuration files |
-| `ogz-client/` | Client assets (maps, models, sounds) |
+| `ogz-server/` | Server binaries and configuration files            |
+| `ogz-client/` | Client assets (maps, models, sounds)               |
 
 ## Quick Start (Docker)
 
@@ -39,6 +40,7 @@ The build uses Ubuntu 22.04 (linux/amd64) with all dependencies pre-installed.
 ### Option B: Native Linux Build
 
 **Prerequisites:**
+
 ```bash
 sudo apt-get install -y \
     build-essential cmake pkg-config \
@@ -47,6 +49,7 @@ sudo apt-get install -y \
 ```
 
 **Build:**
+
 ```bash
 cd ogz-source
 ./build-linux.sh
@@ -55,11 +58,13 @@ cd ogz-source
 ### Option C: Windows Build
 
 **Prerequisites:**
+
 - Visual Studio 2022 with "Desktop development with C++"
 - OpenSSL in `C:\OpenSSL-Win32`
 - zlib in `C:\Program Files (x86)\zlib`
 
 **Build:**
+
 ```bash
 cd ogz-source
 build-win32-VS2022.bat
@@ -114,6 +119,7 @@ open -a CrossOver Gunz.exe
 If you have a Windows machine:
 
 **Prerequisites:**
+
 - Visual Studio 2022 with "Desktop development with C++"
 - OpenSSL in `C:\OpenSSL-Win32`
 - zlib in `C:\Program Files (x86)\zlib`
@@ -154,26 +160,28 @@ docker compose restart      # Restart server
 ### Docker configuration
 
 The server runs on Ubuntu 22.04 with:
+
 - `network_mode: host` for optimal game server performance
 - Config files mounted as volumes (editable without rebuild)
 - Port 6000 (TCP/UDP)
 
 ## Configuration Files (ogz-server/)
 
-| File | Purpose |
-|------|---------|
-| `server.ini` | Server IPs, ports, database settings |
-| `zitem.xml` | Item definitions |
-| `channel.xml` | Server channels |
-| `channelrule.xml` | Channel rules |
-| `shop.xml` | Store inventory |
-| `npc.xml` | NPC definitions |
-| `questmap.xml` | Quest maps |
-| `scenario.xml` | Quest scenarios |
+| File              | Purpose                              |
+| ----------------- | ------------------------------------ |
+| `server.ini`      | Server IPs, ports, database settings |
+| `zitem.xml`       | Item definitions                     |
+| `channel.xml`     | Server channels                      |
+| `channelrule.xml` | Channel rules                        |
+| `shop.xml`        | Store inventory                      |
+| `npc.xml`         | NPC definitions                      |
+| `questmap.xml`    | Quest maps                           |
+| `scenario.xml`    | Quest scenarios                      |
 
 ### Local development (server.ini)
 
 For local testing, set these IPs to `127.0.0.1`:
+
 - `FREELOGINIP`
 - `KEEPERIP`
 - `DBAgentIP`
@@ -181,6 +189,7 @@ For local testing, set these IPs to `127.0.0.1`:
 ## Client Setup
 
 ### Windows
+
 Run `GunZ.exe` from `ogz-client/`
 
 ### macOS (Wine)
@@ -217,6 +226,7 @@ WINEPREFIX=~/.wine32 winetricks directx9 vcrun2008 vcrun2010
 ```
 
 If `winetricks` is not installed:
+
 ```bash
 brew install winetricks
 ```
@@ -224,17 +234,20 @@ brew install winetricks
 #### 4. Run GunZ
 
 **Basic run:**
+
 ```bash
 cd /path/to/ogz-client
 WINEPREFIX=~/.wine32 wine Gunz.exe
 ```
 
 **Windowed mode with custom resolution (recommended):**
+
 ```bash
 WINEPREFIX=~/.wine32 wine explorer /desktop=GunZ,1024x768 Gunz.exe
 ```
 
 **Full command from any directory:**
+
 ```bash
 WINEPREFIX=~/.wine32 wine explorer /desktop=GunZ,1024x768 /full/path/to/ogz-client/Gunz.exe
 ```
@@ -242,6 +255,7 @@ WINEPREFIX=~/.wine32 wine explorer /desktop=GunZ,1024x768 /full/path/to/ogz-clie
 #### 5. Create Launch Script (Optional)
 
 Create `run-gunz.sh`:
+
 ```bash
 #!/bin/bash
 cd /path/to/ogz-client
@@ -249,6 +263,7 @@ WINEPREFIX=~/.wine32 wine explorer /desktop=GunZ,1024x768 Gunz.exe
 ```
 
 Make executable:
+
 ```bash
 chmod +x run-gunz.sh
 ./run-gunz.sh
@@ -256,12 +271,12 @@ chmod +x run-gunz.sh
 
 #### Troubleshooting (macOS)
 
-| Issue | Solution |
-|-------|----------|
-| Black screen | Try different Windows version in `winecfg` |
-| No sound | Run `WINEPREFIX=~/.wine32 winetricks sound=alsa` |
-| Graphics glitches | Disable DXVK: `WINEPREFIX=~/.wine32 winetricks renderer=gl` |
-| "Cannot access server" | Check server IP in config.xml and Locator.ini |
+| Issue                  | Solution                                                    |
+| ---------------------- | ----------------------------------------------------------- |
+| Black screen           | Try different Windows version in `winecfg`                  |
+| No sound               | Run `WINEPREFIX=~/.wine32 winetricks sound=alsa`            |
+| Graphics glitches      | Disable DXVK: `WINEPREFIX=~/.wine32 winetricks renderer=gl` |
+| "Cannot access server" | Check server IP in config.xml and Locator.ini               |
 
 ### Linux (Wine)
 
@@ -283,6 +298,7 @@ WINEPREFIX=~/.wine32 wine Gunz.exe
 ### Client Configuration
 
 Create/edit `~/Documents/Open GunZ/config.xml`:
+
 ```xml
 <XML>
     <SERVER>
@@ -293,6 +309,7 @@ Create/edit `~/Documents/Open GunZ/config.xml`:
 ```
 
 **Note:** On macOS with Wine, this file is located at:
+
 ```
 ~/.wine32/drive_c/users/YOUR_USERNAME/Documents/Open GunZ/config.xml
 ```
